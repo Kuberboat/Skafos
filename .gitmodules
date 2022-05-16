@@ -1,0 +1,3 @@
+[submodule "kuberboat"]
+	path = kuberboat
+	url = https://gitee.com/xx01cyx/kuberboat
