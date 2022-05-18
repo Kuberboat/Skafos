@@ -1,0 +1,10 @@
+kind: ratio
+metadata:
+  name: my-ratio
+spec:
+  ratio: 10
+  serviceName: mypod-service
+  selector:
+    app: mypod
+    env: dev
+    version: v1

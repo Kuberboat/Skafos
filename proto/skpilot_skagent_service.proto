@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package skpilot_skagent_service;
+
+option go_package = "p9t.io/skafos/pkg/proto";
+
+import "default.proto";
+
+message RegisterSelfRequest {
+    bytes node = 1;
+}
+
+service SkpilotSkagentService {
+    rpc RegisterSelf(RegisterSelfRequest) returns(default.DefaultResponse);
+}

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package skagent_skpilot_service;
+
+option go_package = "p9t.io/skafos/pkg/proto";
+
+import "default.proto";
+
+message UpdateRuleRequest {
+    bytes dummy = 1;
+}
+
+service SkagentSkpilotService {
+    rpc UpdateRule(UpdateRuleRequest) returns(default.DefaultResponse);
+}
