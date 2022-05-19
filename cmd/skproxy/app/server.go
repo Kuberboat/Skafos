@@ -8,17 +8,18 @@ import (
 	"p9t.io/skafos/pkg/skproxy"
 )
 
-func ListenProxy() {
-	addr := fmt.Sprintf("0.0.0.0:%v", skproxy.ProxyPort)
+func Listen(port uint16, handler func(resp http.ResponseWriter, req *http.Request)) {
+	addr := fmt.Sprintf("0.0.0.0:%v", port)
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", skproxy.ProxyRequest)
-	glog.Infof("listening at port %v", skproxy.ProxyPort)
+	mux.HandleFunc("/", handler)
+	glog.Infof("listening at port %v", port)
 	if err := http.ListenAndServe(addr, mux); err != nil {
 		glog.Fatal(err)
 	}
 }
 
 func StartServer() {
-	go ListenProxy()
+	go Listen(skproxy.ProxyPort, skproxy.ProxyRequest)
+	go Listen(skproxy.ConfigPort, skproxy.SetConfig)
 	select {}
 }

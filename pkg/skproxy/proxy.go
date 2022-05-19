@@ -13,12 +13,19 @@ import (
 const (
 	// ProxyPort is the port number on which skproxy receives http requests and forward them.
 	ProxyPort uint16 = 16000
+	// ConfigPort is the port number on which skproxy receives http requests for configuration.
+	ConfigPort uint16 = 16001
 )
+
+var ruleManager *ProxyRuleManager = NewProxyRuleManager()
 
 // getPort extracts the target port from the request. Default to 80.
 func getPort(req *http.Request) (uint16, error) {
-	portStr := req.URL.Port()
-	if len(portStr) == 0 {
+	idx := strings.LastIndex(req.Host, ":")
+	var portStr string
+	if idx != -1 {
+		portStr = req.Host[idx+1:]
+	} else {
 		portStr = "80"
 	}
 	port, err := strconv.ParseUint(portStr, 10, 16)
@@ -28,12 +35,12 @@ func getPort(req *http.Request) (uint16, error) {
 	return uint16(port), nil
 }
 
-// getNewHost looks up the proxy rules and determine which IP/domain and port
+// getNewAddress looks up the proxy rules and determine which IP/domain and port
 // the original request should be forwarded to.
-// The returned host will contain the new host and port. Port 80 will not be omitted.
-func getNewHost(host string, port uint16) string {
+// The returned address will contain the new host and port. Port 80 will not be omitted.
+func getNewAddress(req *http.Request, host string, port uint16) string {
 	// Currently just forward as is.
-	return fmt.Sprintf("%v:%v", host, port)
+	return ruleManager.GetProxiedAddress(req, host, port)
 }
 
 // buildNewRequest builds a new request based on the original request, except that
@@ -57,7 +64,7 @@ func buildNewRequest(req *http.Request) (*http.Request, error) {
 	}
 
 	// Modify new request data.
-	newHost := getNewHost(host, port)
+	newHost := getNewAddress(req, host, port)
 	newReq.Host = newHost
 	newReq.URL.Host = newHost
 	newReq.RequestURI = newReq.URL.String()
@@ -84,8 +91,8 @@ func ProxyRequest(resp http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	// Send the new request request.
-	glog.Infof(fmt.Sprintf("%v -> %v", req.RequestURI, newReq.RequestURI))
+	// Send the new request.
+	glog.Infof(fmt.Sprintf("%v %v -> %v", req.Host, req.URL.Path, newReq.RequestURI))
 	forwardedResp, err := transport.RoundTrip(newReq)
 	if err != nil {
 		resp.WriteHeader(http.StatusBadGateway)
@@ -101,4 +108,8 @@ func ProxyRequest(resp http.ResponseWriter, req *http.Request) {
 	resp.WriteHeader(forwardedResp.StatusCode)
 	io.Copy(resp, forwardedResp.Body)
 	forwardedResp.Body.Close()
+}
+
+func SetConfig(resp http.ResponseWriter, req *http.Request) {
+	// TODO
 }
