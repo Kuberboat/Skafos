@@ -1,4 +1,5 @@
 BUILD_DIR = ./out/bin
+INSTALL_DIR = /usr/local/bin
 CMD_SOURCE_DIRS = cmd
 SOURCE_DIRS = cmd pkg
 SKPROXY_SRC = ./cmd/skproxy/skproxy.go
@@ -37,6 +38,14 @@ skpilot: $(SKPILOT_SRC)
 
 skagent: $(SKAGENT_SRC)
 	@go build -o $(BUILD_DIR)/$(SKAGENT_OBJ) $(SKAGENT_SRC)
+
+.PHONY: install
+install:
+	cp $(BUILD_DIR)/$(SKPROXY_OBJ) $(INSTALL_DIR)
+	cp $(BUILD_DIR)/$(SKCTL_OBJ) $(INSTALL_DIR)
+	cp $(BUILD_DIR)/$(SKAGENT_OBJ) $(INSTALL_DIR)
+	cp $(BUILD_DIR)/$(SKPILOT_OBJ) $(INSTALL_DIR)
+	cp $(SCRIPTS_DIR)/skafos-iptables.sh $(INSTALL_DIR)
 
 .PHONY: proto
 proto:

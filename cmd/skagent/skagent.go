@@ -16,9 +16,9 @@ var (
 
 func init() {
 	flag.Set("logtostderr", "true")
-	flag.StringVar(&address, "address", "localhost", "IP v4 address of the host skagent runs on.")
+	flag.StringVar(&address, "host-ip", "localhost", "IPv4 address of this agent skpilot will see when this agent is registered.")
 	flag.UintVar(&port, "port", core.SKAGENT_PORT, "Port skagent listens to.")
-	flag.StringVar(&skPilotAddress, "skpilot-address", "localhost", "IP v4 address of the host skpilot runs on.")
+	flag.StringVar(&skPilotAddress, "skpilot-ip", "localhost", "IPv4 address of the host skpilot runs on.")
 	flag.UintVar(&skPilotPort, "skpilot-port", core.SKPILOT_PORT, "Port skpilot listens to.")
 }
 

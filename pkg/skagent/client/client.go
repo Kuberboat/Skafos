@@ -16,19 +16,19 @@ import (
 var CONN_TIMEOUT time.Duration = time.Second
 
 type SkPilotClient struct {
-	connection    *grpc.ClientConn
-	skagentClient pb.SkpilotSkagentServiceClient
+	connection *grpc.ClientConn
+	client     pb.SkpilotSkagentServiceClient
 }
 
-func NewCtlClient(skPilotAddress string, skPilotPort uint16) (*SkPilotClient, error) {
-	addr := fmt.Sprintf("%v:%v", skPilotAddress, skPilotPort)
+func NewClient(skPilotIP string, skPilotPort uint16) (*SkPilotClient, error) {
+	addr := fmt.Sprintf("%v:%v", skPilotIP, skPilotPort)
 	conn, err := grpc.Dial(addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, errors.New("skagent failed to connect control plane")
 	}
 	return &SkPilotClient{
-		connection:    conn,
-		skagentClient: pb.NewSkpilotSkagentServiceClient(conn),
+		connection: conn,
+		client:     pb.NewSkpilotSkagentServiceClient(conn),
 	}, nil
 }
 
@@ -39,7 +39,7 @@ func (c *SkPilotClient) RegisterSelf(node *core.Node) (*pb.DefaultResponse, erro
 	if err != nil {
 		return &pb.DefaultResponse{Status: -1}, err
 	}
-	return c.skagentClient.RegisterSelf(ctx, &pb.RegisterSelfRequest{
+	return c.client.RegisterSelf(ctx, &pb.RegisterSelfRequest{
 		Node: data,
 	})
 }

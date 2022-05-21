@@ -234,8 +234,8 @@ func (m *ProxyRuleManager) SetRule(name string, generator ProxyRuleGenerator) er
 
 // ClearRules removes all rules.
 func (m *ProxyRuleManager) ClearRules() {
-	m.mtx.RLock()
-	defer m.mtx.RUnlock()
+	m.mtx.Lock()
+	defer m.mtx.Unlock()
 	for k := range m.rules {
 		delete(m.rules, k)
 	}
