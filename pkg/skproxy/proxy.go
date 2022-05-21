@@ -1,8 +1,10 @@
 package skproxy
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 	"strings"
@@ -111,5 +113,30 @@ func ProxyRequest(resp http.ResponseWriter, req *http.Request) {
 }
 
 func SetConfig(resp http.ResponseWriter, req *http.Request) {
-	// TODO
+	data, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		glog.Errorf("failed to read request body: %v", err.Error())
+		return
+	}
+
+	var config Config
+	err = json.Unmarshal(data, &config)
+	if err != nil {
+		glog.Errorf("failed to unmarshal config: %v", err.Error())
+	}
+
+	glog.Infof("config received")
+	ruleManager.ClearRules()
+	for name, ratioRuleGenerator := range config.RatioRules {
+		err := ruleManager.SetRule(name, ratioRuleGenerator)
+		if err != nil {
+			glog.Errorf("failed to add ratio rule %+v: %v", ratioRuleGenerator, err.Error())
+		}
+	}
+	for name, regexRuleGenerator := range config.RegexRules {
+		err := ruleManager.SetRule(name, regexRuleGenerator)
+		if err != nil {
+			glog.Errorf("failed to add regex rule %+v: %v", regexRuleGenerator, err.Error())
+		}
+	}
 }
