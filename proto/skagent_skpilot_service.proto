@@ -6,10 +6,16 @@ option go_package = "p9t.io/skafos/pkg/proto";
 
 import "default.proto";
 
-message UpdateRuleRequest {
-    bytes dummy = 1;
+message CreateProxyRequest {
+    repeated string container_names = 1;
+    repeated string sandbox_ips = 2;
+}
+
+message UpdateRulesRequest {
+    bytes config = 1;
 }
 
 service SkagentSkpilotService {
-    rpc UpdateRule(UpdateRuleRequest) returns(default.DefaultResponse);
+    rpc CreateProxy(CreateProxyRequest) returns(default.DefaultResponse);
+    rpc UpdateRule(UpdateRulesRequest) returns(default.DefaultResponse);
 }
