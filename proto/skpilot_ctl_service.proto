@@ -4,12 +4,17 @@ package skpilot_ctl_service;
 
 option go_package = "p9t.io/skafos/pkg/proto";
 
-import "default.proto";
+import "skdefault.proto";
 
-message ApplyRuleRequest {
-    bytes rule = 1;
+message ApplyRatioRuleRequest {
+    bytes ratio_rule = 1;
+}
+
+message ApplyRegexRuleRequest {
+    bytes regex_rule = 1;
 }
 
 service SkpilotCtlService {
-    rpc ApplyRule(ApplyRuleRequest) returns(default.DefaultResponse);
+    rpc ApplyRatioRule(ApplyRatioRuleRequest) returns(skdefault.DefaultResponse);
+    rpc ApplyRegexRule(ApplyRegexRuleRequest) returns(skdefault.DefaultResponse);
 }

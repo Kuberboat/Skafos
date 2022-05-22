@@ -4,7 +4,7 @@ package skagent_skpilot_service;
 
 option go_package = "p9t.io/skafos/pkg/proto";
 
-import "default.proto";
+import "skdefault.proto";
 
 message CreateProxyRequest {
     repeated string container_names = 1;
@@ -16,6 +16,6 @@ message UpdateRulesRequest {
 }
 
 service SkagentSkpilotService {
-    rpc CreateProxy(CreateProxyRequest) returns(default.DefaultResponse);
-    rpc UpdateRule(UpdateRulesRequest) returns(default.DefaultResponse);
+    rpc CreateProxy(CreateProxyRequest) returns(skdefault.DefaultResponse);
+    rpc UpdateRule(UpdateRulesRequest) returns(skdefault.DefaultResponse);
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
@@ -34,15 +35,57 @@ Examples:
 			if ruleKind.Kind != string(core.RatioType) && ruleKind.Kind != string(core.RegexType) {
 				log.Fatalf("type %v is not supported", ruleKind.Kind)
 			}
-			client := client.NewCtlClient()
-			resp, err := client.ApplyRule(data)
-			if err != nil {
-				log.Fatal(err)
+
+			switch ruleKind.Kind {
+			case string(core.RatioType):
+				applyRatioRule(data)
+			case string(core.RegexType):
+				applyRegexRule(data)
 			}
-			fmt.Printf("Response status: %v ;Rule Applied\n", resp.Status)
 		},
 	}
 )
+
+func applyRatioRule(data []byte) {
+	var rule core.RatioRule
+	if err := yaml.Unmarshal(data, &rule); err != nil {
+		log.Fatalf("cannot unmarshal data: %v", err)
+	}
+
+	// Do some sanity checks
+	if rule.Spec.Ratio > 100 {
+		log.Fatalf("ratio cannot be more than 100")
+	}
+
+	client := client.NewCtlClient()
+	resp, err := client.ApplyRatioRule(&rule)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Response status: %v ;Ratio rule Applied\n", resp.Status)
+}
+
+func applyRegexRule(data []byte) {
+	var rule core.RegexRule
+	if err := yaml.Unmarshal(data, &rule); err != nil {
+		log.Fatalf("cannot unmarshal data: %v", err)
+	}
+
+	// Do some sanity checks
+	for _, matcher := range rule.Spec.Matchers {
+		_, err := regexp.Compile(matcher.Regex)
+		if err != nil {
+			log.Fatalf("incorrect regex %s", matcher.Regex)
+		}
+	}
+
+	client := client.NewCtlClient()
+	resp, err := client.ApplyRegexRule(&rule)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Printf("Response status: %v ;Regex rule Applied\n", resp.Status)
+}
 
 func init() {
 	rootCmd.AddCommand(applyCmd)

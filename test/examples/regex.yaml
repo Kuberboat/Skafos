@@ -1,0 +1,11 @@
+kind: regex
+name: my-re
+spec:
+  serviceName: nginx-service
+  matchers:
+  - header: Token
+    regex: .*?
+    selector:
+      app: my-nginx
+      env: dev
+      version: v2

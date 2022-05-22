@@ -164,6 +164,7 @@ func (a *agent) cleanDeadProxy() {
 		_, err := cli.ContainerInspect(context.Background(), p.SandboxName)
 		// Delete proxy when the pod is removed.
 		if err != nil {
+			a.proxyManager.DeleteProxy(p.ID)
 			glog.Infof("clean up proxy for %v", p.SandboxName)
 			err := cli.ContainerStop(context.Background(), p.ID, nil)
 			if err != nil {
@@ -174,7 +175,6 @@ func (a *agent) cleanDeadProxy() {
 			if err != nil {
 				glog.Errorf("failed to remove proxy: %v", err.Error())
 			}
-			a.proxyManager.DeleteProxy(p.ID)
 		}
 	}
 }

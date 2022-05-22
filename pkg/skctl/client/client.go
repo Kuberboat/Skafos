@@ -2,6 +2,7 @@ package client
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
@@ -33,10 +34,26 @@ func NewCtlClient() *ctlClient {
 	}
 }
 
-func (c *ctlClient) ApplyRule(rule []byte) (*pb.DefaultResponse, error) {
+func (c *ctlClient) ApplyRatioRule(rule *core.RatioRule) (*pb.DefaultResponse, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), CONN_TIMEOUT)
 	defer cancel()
-	return c.client.ApplyRule(ctx, &pb.ApplyRuleRequest{
-		Rule: rule,
+	data, err := json.Marshal(rule)
+	if err != nil {
+		return &pb.DefaultResponse{Status: 1}, err
+	}
+	return c.client.ApplyRatioRule(ctx, &pb.ApplyRatioRuleRequest{
+		RatioRule: data,
+	})
+}
+
+func (c *ctlClient) ApplyRegexRule(rule *core.RegexRule) (*pb.DefaultResponse, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), CONN_TIMEOUT)
+	defer cancel()
+	data, err := json.Marshal(rule)
+	if err != nil {
+		return &pb.DefaultResponse{Status: 1}, err
+	}
+	return c.client.ApplyRegexRule(ctx, &pb.ApplyRegexRuleRequest{
+		RegexRule: data,
 	})
 }

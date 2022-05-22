@@ -1,10 +1,9 @@
 kind: ratio
-metadata:
-  name: my-ratio
+name: my-ratio
 spec:
+  serviceName: nginx-service
   ratio: 10
-  serviceName: mypod-service
   selector:
-    app: mypod
+    app: my-nginx
     env: dev
     version: v1

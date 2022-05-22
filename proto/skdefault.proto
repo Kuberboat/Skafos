@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package default;
+package skdefault;
 
 option go_package = "p9t.io/skafos/pkg/proto";
 
