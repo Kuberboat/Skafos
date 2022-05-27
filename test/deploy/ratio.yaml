@@ -1,0 +1,9 @@
+kind: ratio
+name: test-ratio
+spec:
+  serviceName: http-service-ratio
+  ratio: 30
+  selector:
+    app: version_server
+    env: dev
+    version: v2
