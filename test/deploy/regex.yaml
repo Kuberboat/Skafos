@@ -4,8 +4,8 @@ spec:
   serviceName: http-service-re
   matchers:
   - header: Token
-    regex: 
+    regex: .*?
     selector:
       app: version_server
       env: dev
-      version: v1
+      version: v2

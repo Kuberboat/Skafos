@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	discoverInterval = time.Second * 7
-	probeInterval    = time.Second * 5
+	discoverInterval = time.Second * 10
+	probeInterval    = time.Second * 8
 )
 
 // SkPilot handles user's requests of applying ratio rules and regex rules. It also

@@ -1,6 +1,6 @@
 kind: Service
 metadata:
-  name: http-service-regex
+  name: http-service-re
 spec:
   ports:
     - port: 8080
