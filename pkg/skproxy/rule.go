@@ -54,6 +54,17 @@ func (r *ruleBase) CanProxyRequest(host string, port uint16) bool {
 	return host == r.serviceIP && ok
 }
 
+// GetMappedPort maps service port to pod port.
+// Returns 80 by default.
+func (r *ruleBase) GetMappedPort(port uint16) uint16 {
+	ret, ok := r.portMapping[port]
+	if !ok {
+		return 80
+	} else {
+		return ret
+	}
+}
+
 type ratioRule struct {
 	// base is used to determine if host:port can be proxied.
 	base *ruleBase
@@ -78,10 +89,17 @@ func (r *ratioRule) GetProxiedAddress(req *http.Request, host string, port uint1
 	}
 
 	rand := rand.Intn(100)
+	var err error
+	var ip string
 	if rand < r.ratio {
-		return r.proxiedIPs.NextIP()
+		ip, err = r.proxiedIPs.NextIP()
 	} else {
-		return r.otherIPs.NextIP()
+		ip, err = r.otherIPs.NextIP()
+	}
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("%v:%v", ip, r.base.GetMappedPort(port)), nil
 	}
 }
 
@@ -112,13 +130,18 @@ func (r *regexRule) GetProxiedAddress(req *http.Request, host string, port uint1
 		for _, v := range vs {
 			for _, matcher := range r.matchers {
 				if ip, ok := matcher.MatchAndGetIP(k, v); ok {
-					return ip, nil
+					return fmt.Sprintf("%v:%v", ip, r.base.GetMappedPort(port)), nil
 				}
 			}
 		}
 	}
 
-	return r.otherIPs.NextIP()
+	ip, err := r.otherIPs.NextIP()
+	if err != nil {
+		return "", err
+	} else {
+		return fmt.Sprintf("%v:%v", ip, r.base.GetMappedPort(port)), nil
+	}
 }
 
 // =============================================================================
