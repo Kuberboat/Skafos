@@ -1,0 +1,11 @@
+kind: regex
+name: test-re
+spec:
+  serviceName: http-service-re
+  matchers:
+  - header: Token
+    regex: .*?
+    selector:
+      app: version_server
+      env: dev
+      version: v2

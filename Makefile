@@ -21,7 +21,7 @@ $(shell mkdir -p $(BUILD_DIR))
 export GO111MODULE := on
 export GOPROXY := https://mirrors.aliyun.com/goproxy/,direct
 
-all: proto skproxy skctl skpilot skagent
+all: proto skproxy skctl skpilot skagent install
 
 skproxy: $(SKPROXY_SRC)
 	@go build -o $(BUILD_DIR)/$(SKPROXY_OBJ) $(SKPROXY_SRC)
@@ -56,6 +56,10 @@ proto:
 fmt:
 	@gofmt -s -w $(SOURCE_DIRS)
 	$(SHFMT_FLAG) -f . | $(XARGS_FLAG) $(SHFMT_FLAG) -w
+
+.PHONY: stop
+stop:
+	$(SCRIPTS_DIR)/stop.sh
 
 .PHONY: clean
 clean:

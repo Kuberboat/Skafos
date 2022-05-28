@@ -1,0 +1,10 @@
+kind: Service
+metadata:
+  name: http-service-re
+spec:
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: version_server
+    env: dev

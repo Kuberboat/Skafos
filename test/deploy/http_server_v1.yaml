@@ -1,0 +1,20 @@
+kind: Deployment
+metadata:
+  name: http-server-v1
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: version_server
+        env: dev
+        version: v1
+    spec:
+      containers:
+      - name: version-server
+        image: windowsxpbeta/http_server:v1.0
+        ports:
+          - 8080
+        resources:
+          cpu: 1
+          memory: 128000000

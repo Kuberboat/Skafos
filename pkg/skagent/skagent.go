@@ -83,7 +83,7 @@ func (a *agent) SetupProxy(sandboxName string, ip string) error {
 		context.Background(),
 		resp.ID,
 		dockertypes.ContainerStartOptions{}); err != nil {
-		return nil
+		return err
 	}
 
 	// Configure iptables.

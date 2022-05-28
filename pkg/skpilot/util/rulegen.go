@@ -18,7 +18,7 @@ func GenerateRatioRule(
 
 	portMapping := make(map[uint16]uint16)
 	for _, portPair := range service.Spec.Ports {
-		portMapping[portPair.Port] = portMapping[portPair.TargetPort]
+		portMapping[portPair.Port] = portPair.TargetPort
 	}
 
 	proxiedIPs := make([]string, 0)
@@ -50,7 +50,7 @@ func GenerateRegexRule(
 
 	portMapping := make(map[uint16]uint16)
 	for _, portPair := range service.Spec.Ports {
-		portMapping[portPair.Port] = portMapping[portPair.TargetPort]
+		portMapping[portPair.Port] = portPair.TargetPort
 	}
 
 	matchers := make([]*skproxy.HeaderRegexMatcher, 0, len(rule.Spec.Matchers))

@@ -14,7 +14,7 @@ import (
 	"p9t.io/skafos/pkg/skproxy"
 )
 
-var SK_CONN_TIMEOUT time.Duration = time.Second * 3
+var SK_CONN_TIMEOUT time.Duration = time.Second * 6
 
 type SkClient struct {
 	connection *grpc.ClientConn
